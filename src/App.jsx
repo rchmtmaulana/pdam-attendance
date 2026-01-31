@@ -10,6 +10,8 @@ import AdminDashboard from './pages/admin/Dashboard';
 import Report from './pages/mahasiswa/Report';
 import Logbook from './pages/mahasiswa/Logbook';
 import ChangePassword from './pages/ChangePassword';
+import Students from './pages/admin/Students';
+import StudentDetail from './pages/admin/StudentDetail';
 
 function App() {
 	return (
@@ -46,6 +48,18 @@ function App() {
 					<Route path="/admin/dashboard" element={
 						<ProtectedRoute adminOnly>
 							<AdminDashboard />
+						</ProtectedRoute>
+					} />
+
+					<Route path="/admin/students" element={
+						<ProtectedRoute adminOnly>
+							<Students />
+						</ProtectedRoute>
+					} />
+
+					<Route path="/admin/students/:studentId" element={
+						<ProtectedRoute adminOnly>
+							<StudentDetail />
 						</ProtectedRoute>
 					} />
 

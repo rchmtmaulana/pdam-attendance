@@ -22,58 +22,81 @@ const Login = () => {
 	};
 
 	const handleSubmit = async (e) => {
-		e.preventDefault();
+    e.preventDefault();
 
-		if (!formData.email || !formData.password) {
-			toast.error('Email dan password harus diisi!');
-			return;
-		}
+    if (!formData.email || !formData.password) {
+        toast.error('Email dan password harus diisi!');
+        return;
+    }
 
-		setLoading(true);
+    setLoading(true);
 
-		try {
-			const userCredential = await signInWithEmailAndPassword(
-				auth,
-				formData.email,
-				formData.password
-			);
+    try {
+        const userCredential = await signInWithEmailAndPassword(
+            auth,
+            formData.email,
+            formData.password
+        );
 
-			const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+        const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
 
-			if (userDoc.exists()) {
-				const userData = userDoc.data();
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
 
-				if (userData.role === 'admin') {
-					navigate('/admin/dashboard');
-				} else {
-					navigate('/mahasiswa/dashboard');
-				}
+            // Check if account is active
+            if (userData.isActive === false) {
+                toast.error('Akun Anda telah dinonaktifkan. Hubungi admin.');
+                await auth.signOut(); // Sign out immediately
+                setLoading(false);
+                return;
+            }
 
-				toast.success(`Selamat datang, ${userData.name}!`);
-			}
-		} catch (error) {
-			console.error('Error logging in:', error);
+            if (userData.role === 'admin') {
+                navigate('/admin/dashboard');
+            } else {
+                navigate('/mahasiswa/dashboard');
+            }
 
-			switch (error.code) {
-				case 'auth/user-not-found':
-				case 'auth/wrong-password':
-				case 'auth/invalid-credential':
-					toast.error('Email atau password salah!');
-					break;
-				case 'auth/invalid-email':
-					toast.error('Format email tidak valid!');
-					break;
-				case 'auth/too-many-requests':
-					toast.error('Terlalu banyak percobaan. Coba lagi nanti.');
-					break;
-				default:
-					toast.error('Gagal login. Silakan coba lagi.');
-					break;
-			}
-		} finally {
-			setLoading(false);
-		}
-	};
+            toast.success(`Selamat datang, ${userData.name}!`);
+        } else {
+            // User authenticated but no profile in Firestore
+            toast.error('Profil pengguna tidak ditemukan. Hubungi admin.');
+            await auth.signOut();
+        }
+    } catch (error) {
+        console.error('Error logging in:', error);
+
+        // Better error messages
+        switch (error.code) {
+            case 'auth/user-not-found':
+                toast.error('❌ Email tidak terdaftar! Silakan daftar terlebih dahulu.');
+                break;
+            case 'auth/wrong-password':
+                toast.error('❌ Password salah! Silakan coba lagi.');
+                break;
+            case 'auth/invalid-credential':
+                toast.error('❌ Email atau password salah!');
+                break;
+            case 'auth/invalid-email':
+                toast.error('❌ Format email tidak valid!');
+                break;
+            case 'auth/user-disabled':
+                toast.error('❌ Akun ini telah dinonaktifkan. Hubungi admin.');
+                break;
+            case 'auth/too-many-requests':
+                toast.error('⚠️ Terlalu banyak percobaan login. Coba lagi dalam beberapa menit.');
+                break;
+            case 'auth/network-request-failed':
+                toast.error('❌ Koneksi internet bermasalah. Periksa jaringan Anda.');
+                break;
+            default:
+                toast.error('❌ Gagal login: ' + (error.message || 'Silakan coba lagi.'));
+                break;
+        }
+    } finally {
+        setLoading(false);
+    }
+};
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">

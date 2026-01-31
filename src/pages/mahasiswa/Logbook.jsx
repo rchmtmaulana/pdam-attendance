@@ -53,8 +53,21 @@ const Logbook = () => {
     };
 
     const handleSaveLogbook = async () => {
-        if (!description.trim()) {
+        const trimmedDescription = description.trim();
+
+        if (!trimmedDescription) {
             toast.error('Deskripsi kegiatan tidak boleh kosong!');
+            return;
+        }
+
+        const wordCount = getWordCount(description);
+        if (wordCount < 20) {
+            toast.error(`Deskripsi minimal 20 kata! (Saat ini: ${wordCount} kata)`);
+            return;
+        }
+
+        if (wordCount < 20) {
+            toast.error(`Deskripsi minimal 20 kata! (Saat ini: ${wordCount} kata)`);
             return;
         }
 
@@ -86,7 +99,7 @@ const Logbook = () => {
                 userProfile.uid,
                 userProfile.name,
                 userProfile.nim,
-                description,
+                trimmedDescription,
                 photoData
             );
 
@@ -116,6 +129,12 @@ const Logbook = () => {
 
     const hasCheckedIn = todayAttendance?.checkIn;
     const canEdit = hasCheckedIn && !todayAttendance?.checkOut;
+
+    const getWordCount = (text) => {
+        if (!text.trim()) return 0;
+        return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+    };
+
 
     return (
         <MahasiswaLayout>
@@ -156,13 +175,17 @@ const Logbook = () => {
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                         disabled={!canEdit && todayLogbook}
-                                        placeholder="Tuliskan kegiatan yang dilakukan hari ini (minimal 20 karakter)..."
+                                        placeholder="Tuliskan kegiatan yang dilakukan hari ini (minimal 20 kata)..."
                                         rows={6}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                                     />
                                     <p className="text-xs text-gray-500 mt-2">
-                                        {description.length} karakter
+                                        {getWordCount(description)} / 20 kata minimum
+                                        <span className="ml-2 text-gray-400">
+                                            ({description.length} karakter)
+                                        </span>
                                     </p>
+
                                 </div>
 
                                 <button
@@ -186,7 +209,7 @@ const Logbook = () => {
                             <div className="mt-6 p-6 bg-blue-50 rounded-xl border border-blue-200">
                                 <h3 className="font-semibold text-blue-900 mb-3">📋 Panduan Pengisian:</h3>
                                 <ul className="text-sm text-blue-800 space-y-2">
-                                    <li>• <strong>Foto:</strong> Ambil foto kegiatan saat sedang berlangsung (live), bukan foto lama</li>
+                                    <li>• <strong>Foto:</strong> Ambil foto kegiatan saat sedang berlangsung</li>
                                     <li>• <strong>Deskripsi:</strong> Jelaskan detail kegiatan yang dilakukan hari ini</li>
                                     <li>• <strong>Waktu:</strong> Logbook dapat diisi kapan saja selama jam kerja</li>
                                     <li>• <strong>Edit:</strong> Logbook dapat diubah sebelum absen pulang</li>

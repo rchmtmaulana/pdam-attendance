@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../services/firebase";
 
@@ -35,12 +35,24 @@ export const AuthProvider = ({ children }) => {
 		return unsubscribe;
 	}, []);
 
+	const logout = async () => {
+        try {
+            await signOut(auth);
+            setCurrentUser(null);
+            setUserProfile(null);
+        } catch (error) {
+            console.error("Logout error:", error);
+            throw error;
+        }
+    };
+
 	const value = {
 		currentUser,
 		userProfile,
 		loading,
 		isAdmin: userProfile?.role === "admin",
 		isMahasiswa: userProfile?.role === "mahasiswa",
+		logout
 	};
 
 	return (

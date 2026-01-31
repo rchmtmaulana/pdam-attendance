@@ -54,9 +54,6 @@ const Navbar = () => {
                         <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                             Magang PDAM
                         </h1>
-                        {/* <span className="ml-3 px-3 py-1 text-xs font-medium bg-blue-100 text-primary rounded-full">
-                            {userProfile?.role === "admin" ? "Admin" : "Mahasiswa"}
-                        </span> */}
                     </div>
 
                     <div className="relative" ref={dropdownRef}>
