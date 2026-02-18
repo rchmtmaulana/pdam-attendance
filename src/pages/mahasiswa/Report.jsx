@@ -61,11 +61,8 @@ const Report = () => {
 
                         <div className="max-w-3xl mx-auto px-2 sm:px-6 lg:px-8">
                             <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                                <div className="text-center py-8">
+                                <div className="text-center">
                                     <div className="mb-6">
-                                        <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <span className="text-5xl">📄</span>
-                                        </div>
                                         <h2 className="text-2xl font-bold text-gray-900 mb-2">
                                             Generate Laporan PDF
                                         </h2>
@@ -84,7 +81,6 @@ const Report = () => {
                                                 <li>Ringkasan kehadiran (Total hari, Persentase)</li>
                                                 <li>Tabel detail absensi harian (masuk & pulang)</li>
                                                 <li>Logbook kegiatan lengkap dengan foto</li>
-                                                <li>Format professional & siap print</li>
                                             </ul>
                                         </div>
                                     </div>

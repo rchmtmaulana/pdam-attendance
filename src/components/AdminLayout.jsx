@@ -11,9 +11,9 @@ const AdminLayout = ({ children }) => {
 
     const navigation = [
         { name: 'Dashboard', href: '/admin/dashboard', icon: '📊' },
-        { name: 'Mahasiswa', href: '/admin/students', icon: '👥' },
-        { name: 'Monitoring', href: '/admin/monitoring', icon: '👁️' },
-        { name: 'Laporan', href: '/admin/reports', icon: '📄' },
+        // { name: 'Mahasiswa', href: '/admin/students', icon: '👥' },
+        // { name: 'Monitoring', href: '/admin/monitoring', icon: '👁️' },
+        // { name: 'Laporan', href: '/admin/reports', icon: '📄' },
     ];
 
     const handleLogout = async () => {

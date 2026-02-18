@@ -143,7 +143,7 @@ export const generatePDFReport = async (userProfile, attendances, logbooks, stat
 
             doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
-            doc.text(`${index + 1}. ${format(new Date(log.date), 'dd MMMM yyyy', { locale: id })}`, 20, yPos);
+            doc.text(`${index + 1}. ${format(new Date(log.date), 'EEEE, dd MMMM yyyy', { locale: id })}`, 20, yPos);
             yPos += 7;
 
             doc.setFont('helvetica', 'normal');
