@@ -60,6 +60,11 @@ export const getStudentById = async (studentId) => {
 
 export const getStudentAttendanceStats = async (studentId) => {
     try {
+        const studentDoc = await getDoc(doc(db, 'users', studentId));
+        const durasiMagang = studentDoc.exists()
+            ? (studentDoc.data().durasiMagang || 0)
+            : 0;
+
         const attendanceRef = collection(db, 'attendance');
         const q = query(
             attendanceRef,
@@ -77,27 +82,29 @@ export const getStudentAttendanceStats = async (studentId) => {
             });
         });
 
-        const totalDays = attendances.length;
-        const completeDays = attendances.filter(a => a.checkIn && a.checkOut).length;
-        
+        const totalHadir = attendances.filter(a => a.checkIn && a.checkOut).length;
+
+        const totalTidakHadir = Math.max(0, durasiMagang - totalHadir);
+
+        const percentage = durasiMagang > 0
+            ? Math.round((totalHadir / durasiMagang) * 100)
+            : 0;
+
         const onTimeDays = attendances.filter(a => {
             if (!a.checkIn || !a.checkIn.time) return false;
-            
             const checkInTime = toDate(a.checkIn.time);
             if (!checkInTime) return false;
-            
             const hour = checkInTime.getHours();
-            const minute = checkInTime.getMinutes();
-            
-            // On-time Jam 08:00 (toleransi 08:30)
-            return hour < 8 || (hour === 8 && minute === 30);
+            return hour < 9; // ✅ sebelum jam 09:00
         }).length;
 
         return {
-            totalDays,
-            completeDays,
+            totalHadir,
+            totalTidakHadir,
+            percentage,
+            durasiMagang,
             onTimeDays,
-            attendances
+            attendances,
         };
     } catch (error) {
         console.error('Error getting attendance stats:', error);
@@ -144,10 +151,10 @@ export const toggleStudentStatus = async (studentId, isActive) => {
     }
 };
 
-// Delete student and all related data (CASCADE DELETE)
+// Delete student and all related data
 export const deleteStudent = async (studentId) => {
     try {
-        // 1. Delete all attendance records
+        // 1. attendance records
         const attendanceRef = collection(db, 'attendance');
         const attendanceQuery = query(attendanceRef, where('userId', '==', studentId));
         const attendanceSnapshot = await getDocs(attendanceQuery);
@@ -159,7 +166,7 @@ export const deleteStudent = async (studentId) => {
         await Promise.all(attendanceDeletes);
         console.log(`Deleted ${attendanceDeletes.length} attendance records`);
 
-        // 2. Delete all logbooks
+        // 2. logbooks
         const logbooksRef = collection(db, 'logbooks');
         const logbooksQuery = query(logbooksRef, where('userId', '==', studentId));
         const logbooksSnapshot = await getDocs(logbooksQuery);
@@ -171,14 +178,10 @@ export const deleteStudent = async (studentId) => {
         await Promise.all(logbookDeletes);
         console.log(`Deleted ${logbookDeletes.length} logbook records`);
 
-        // 3. Delete user document
+        // 3. user document
         const userRef = doc(db, 'users', studentId);
         await deleteDoc(userRef);
         console.log('Deleted user document');
-
-        // Note: Firebase Auth user deletion requires admin SDK (backend)
-        // For now, we only delete Firestore data
-        // You can add Cloud Function to delete auth user later
 
         return {
             success: true,

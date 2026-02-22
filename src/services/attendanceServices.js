@@ -102,6 +102,9 @@ export const checkOut = async (attendanceId, location, distance) => {
 
 export const getAttendanceStats = async (userId) => {
 	try {
+		const userDoc = await getDoc(doc(db, 'users', userId));
+		const durasiMagang = userDoc.exists() ? (userDoc.data().durasiMagang || 0) : 0;
+
 		const q = query(
 			collection(db, 'attendance'),
 			where('userId', '==', userId),
@@ -109,18 +112,24 @@ export const getAttendanceStats = async (userId) => {
 		);
 		const querySnapshot = await getDocs(q);
 
-		const totalDays = querySnapshot.size;
 		const attendances = querySnapshot.docs.map(doc => ({
 			id: doc.id,
 			...doc.data()
 		}));
 
-		const completedDays = attendances.filter(a => a.checkIn && a.checkOut).length;
+		const totalHadir = attendances.filter(a => a.checkIn && a.checkOut).length;
+
+		const totalTidakHadir = Math.max(0, durasiMagang - totalHadir);
+
+		const percentage = durasiMagang > 0
+			? Math.round((totalHadir / durasiMagang) * 100)
+			: 0;
 
 		return {
-			totalDays,
-			completedDays,
-			percentage: totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0,
+			totalHadir,
+			totalTidakHadir,
+			percentage,
+			durasiMagang,
 			attendances,
 		};
 	} catch (error) {

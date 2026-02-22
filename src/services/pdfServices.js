@@ -63,9 +63,9 @@ export const generatePDFReport = async (userProfile, attendances, logbooks, stat
     doc.setFontSize(10);
 
     const statsData = [
-        ['Total Hari Hadir', `: ${stats.totalDays} hari`],
-        ['Hari Lengkap (Masuk & Pulang)', `: ${stats.completedDays} hari`],
-        ['Persentase Kehadiran', `: ${stats.percentage}%`],
+        ['Durasi Magang', `: ${stats.durasiMagang ?? 0} hari kerja`],
+        ['Total Hari Hadir', `: ${stats.totalHadir ?? 0} hari`],
+        ['Persentase Kehadiran', `: ${stats.percentage ?? 0}%`],
     ];
 
     statsData.forEach(([label, value]) => {

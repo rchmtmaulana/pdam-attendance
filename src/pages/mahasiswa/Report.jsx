@@ -67,7 +67,7 @@ const Report = () => {
                                             Generate Laporan PDF
                                         </h2>
                                         <p className="text-gray-600 max-w-md mx-auto">
-                                            Download laporan lengkap kehadiran dan logbook harian dalam format PDF untuk diserahkan ke kampus
+                                            Download laporan lengkap kehadiran dan logbook harian dalam format PDF
                                         </p>
                                     </div>
 

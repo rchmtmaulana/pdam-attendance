@@ -54,10 +54,14 @@ const AdminDashboard = () => {
             const todaySnapshot = await getDocs(todayQuery);
             const todayAttendance = todaySnapshot.size;
 
-            // Get total logbooks
+            // Get today logbooks
             const logbooksRef = collection(db, 'logbooks');
-            const logbooksSnapshot = await getDocs(logbooksRef);
-            const totalLogbooks = logbooksSnapshot.size;
+            const todayLogbooksQuery = query(
+                logbooksRef,
+                where('date', '==', today)
+            );
+            const todayLogbooksSnapshot = await getDocs(todayLogbooksQuery);
+            const totalLogbooks = todayLogbooksSnapshot.size;
 
             // Calculate percentage
             const attendancePercentage = totalStudents > 0
@@ -135,7 +139,6 @@ const AdminDashboard = () => {
                 <div className="min-h-screen bg-gray-50">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-                        {/* Header */}
                         <div className="mb-8">
                             <h1 className="text-3xl font-bold text-gray-900">
                                 Dashboard Admin
@@ -145,7 +148,7 @@ const AdminDashboard = () => {
                             </p>
                         </div>
 
-                        {/* Stats Cards */}
+                        {/* Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                             <div className="bg-white rounded-2xl shadow-lg p-6">
                                 <div className="flex items-center justify-between">
@@ -178,7 +181,7 @@ const AdminDashboard = () => {
                             <div className="bg-white rounded-2xl shadow-lg p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm text-gray-600">Total Logbook</p>
+                                        <p className="text-sm text-gray-600">Total Logbook Hari Ini</p>
                                         <p className="text-3xl font-bold text-purple-600 mt-1">
                                             {stats.totalLogbooks}
                                         </p>

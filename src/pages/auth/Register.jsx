@@ -10,6 +10,7 @@ const Register = () => {
         name: "",
         nim: "",
         kampus: "",
+        durasiMagang: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -30,6 +31,12 @@ const Register = () => {
             return;
         }
 
+        const durasi = parseInt(formData.durasiMagang);
+        if (!durasi || durasi < 1 || durasi > 365) {
+            toast.error("Durasi magang harus antara 1 - 365 hari kerja");
+            return;
+        }
+
         setLoading(true);
         try {
             const userCredential = await createUserWithEmailAndPassword(
@@ -44,6 +51,7 @@ const Register = () => {
                 name: formData.name,
                 nim: formData.nim,
                 kampus: formData.kampus,
+                durasiMagang: parseInt(formData.durasiMagang),
                 email: formData.email,
                 role: "mahasiswa",
                 createdAt: new Date().toISOString(),
@@ -109,6 +117,31 @@ const Register = () => {
                             value={formData.kampus}
                             onChange={handleChange}
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Durasi Magang <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                            <input
+                                type="number"
+                                name="durasiMagang"
+                                required
+                                min="1"
+                                max="365"
+                                placeholder="Contoh: 60"
+                                className="w-full px-4 py-3 pr-24 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                value={formData.durasiMagang}
+                                onChange={handleChange}
+                            />
+                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500 font-medium pointer-events-none">
+                                hari kerja
+                            </span>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                            Diskusikan total hari kerja dengan Supervisor
+                        </p>
                     </div>
 
                     <div>

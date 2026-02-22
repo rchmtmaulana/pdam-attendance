@@ -25,6 +25,7 @@ const Logbook = () => {
         if (userProfile) {
             loadData();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userProfile]);
 
     const loadData = async () => {
@@ -61,13 +62,8 @@ const Logbook = () => {
         }
 
         const wordCount = getWordCount(description);
-        if (wordCount < 20) {
-            toast.error(`Deskripsi minimal 20 kata! (Saat ini: ${wordCount} kata)`);
-            return;
-        }
-
-        if (wordCount < 20) {
-            toast.error(`Deskripsi minimal 20 kata! (Saat ini: ${wordCount} kata)`);
+        if (wordCount < 15) {
+            toast.error(`Deskripsi minimal 15 kata! (Saat ini: ${wordCount} kata)`);
             return;
         }
 
@@ -105,8 +101,8 @@ const Logbook = () => {
 
             await updateAttendanceFlags(
                 todayAttendance.id,
-                true, // hasPhoto
-                true  // hasLogbook
+                true,
+                true
             );
 
             toast.success('✅ Logbook berhasil disimpan!');
@@ -156,7 +152,17 @@ const Logbook = () => {
                                 </div>
                             )}
 
-                            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
+                            <div className="p-6 bg-blue-50 rounded-xl border border-blue-200">
+                                <h3 className="font-semibold text-blue-900 mb-3">📋 Panduan Pengisian:</h3>
+                                <ul className="text-sm text-blue-800 space-y-2">
+                                    <li>• <strong>Foto:</strong> Ambil foto kegiatan saat sedang berlangsung</li>
+                                    <li>• <strong>Deskripsi:</strong> Jelaskan detail kegiatan yang dilakukan hari ini</li>
+                                    <li>• <strong>Waktu:</strong> Logbook dapat diisi kapan saja selama jam kerja</li>
+                                    <li>• <strong>Edit:</strong> Logbook dapat diubah sebelum absen pulang</li>
+                                </ul>
+                            </div>
+
+                            <div className="mt-6 bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-3">
                                         📸 Foto Kegiatan <span className="text-red-500">*</span>
@@ -175,17 +181,16 @@ const Logbook = () => {
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                         disabled={!canEdit && todayLogbook}
-                                        placeholder="Tuliskan kegiatan yang dilakukan hari ini (minimal 20 kata)..."
+                                        placeholder="Tuliskan kegiatan yang dilakukan hari ini (minimal 15 kata)..."
                                         rows={6}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                                     />
                                     <p className="text-xs text-gray-500 mt-2">
-                                        {getWordCount(description)} / 20 kata minimum
+                                        {getWordCount(description)} / 15 kata minimum
                                         <span className="ml-2 text-gray-400">
                                             ({description.length} karakter)
                                         </span>
                                     </p>
-
                                 </div>
 
                                 <button
@@ -206,15 +211,7 @@ const Logbook = () => {
                                 )}
                             </div>
 
-                            <div className="mt-6 p-6 bg-blue-50 rounded-xl border border-blue-200">
-                                <h3 className="font-semibold text-blue-900 mb-3">📋 Panduan Pengisian:</h3>
-                                <ul className="text-sm text-blue-800 space-y-2">
-                                    <li>• <strong>Foto:</strong> Ambil foto kegiatan saat sedang berlangsung</li>
-                                    <li>• <strong>Deskripsi:</strong> Jelaskan detail kegiatan yang dilakukan hari ini</li>
-                                    <li>• <strong>Waktu:</strong> Logbook dapat diisi kapan saja selama jam kerja</li>
-                                    <li>• <strong>Edit:</strong> Logbook dapat diubah sebelum absen pulang</li>
-                                </ul>
-                            </div>
+
                         </div>
                     </div>
                 </div>

@@ -23,6 +23,7 @@ const StudentDetail = () => {
 
     useEffect(() => {
         loadStudentData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [studentId]);
 
     const loadStudentData = async () => {
@@ -64,10 +65,6 @@ const StudentDetail = () => {
         );
     }
 
-    const attendancePercentage = attendanceStats?.totalDays > 0
-        ? Math.round((attendanceStats.completeDays / attendanceStats.totalDays) * 100)
-        : 0;
-
     return (
         <AdminLayout>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-0 md:ml-0">
@@ -102,39 +99,44 @@ const StudentDetail = () => {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+
                             <div className="bg-white rounded-2xl shadow-lg p-6">
                                 <div>
-                                    <p className="text-sm text-gray-600">Total Hari</p>
+                                    <p className="text-sm text-gray-600">Durasi Magang</p>
                                     <p className="text-3xl font-bold text-blue-600 mt-1">
-                                        {attendanceStats?.totalDays || 0}
+                                        {attendanceStats?.durasiMagang || 0}
                                     </p>
+                                    <p className="text-xs text-gray-400 mt-1">hari kerja</p>
                                 </div>
                             </div>
 
                             <div className="bg-white rounded-2xl shadow-lg p-6">
                                 <div>
-                                    <p className="text-sm text-gray-600">Hari Lengkap</p>
+                                    <p className="text-sm text-gray-600">Total Hadir</p>
                                     <p className="text-3xl font-bold text-green-600 mt-1">
-                                        {attendanceStats?.completeDays || 0}
+                                        {attendanceStats?.totalHadir || 0}
                                     </p>
+                                    <p className="text-xs text-gray-400 mt-1">Absen masuk & pulang lengkap</p>
                                 </div>
                             </div>
 
                             <div className="bg-white rounded-2xl shadow-lg p-6">
                                 <div>
-                                    <p className="text-sm text-gray-600">Tepat Waktu</p>
-                                    <p className="text-3xl font-bold text-purple-600 mt-1">
-                                        {attendanceStats?.onTimeDays || 0}
+                                    <p className="text-sm text-gray-600">Total Tidak Hadir</p>
+                                    <p className="text-3xl font-bold text-red-500 mt-1">
+                                        {attendanceStats?.totalTidakHadir || 0}
                                     </p>
+                                    <p className="text-xs text-gray-400 mt-1">hari belum/tidak hadir</p>
                                 </div>
                             </div>
 
                             <div className="bg-white rounded-2xl shadow-lg p-6">
                                 <div>
-                                    <p className="text-sm text-gray-600">Persentase</p>
+                                    <p className="text-sm text-gray-600">Persentase Kehadiran</p>
                                     <p className="text-3xl font-bold text-orange-600 mt-1">
-                                        {attendancePercentage}%
+                                        {attendanceStats?.percentage || 0}%
                                     </p>
+                                    <p className="text-xs text-gray-400 mt-1">dari total durasi magang</p>
                                 </div>
                             </div>
                         </div>
@@ -218,14 +220,14 @@ const StudentDetail = () => {
                                                     {formatDate(student.createdAt)}
                                                 </p>
                                             </div>
-                                            {/* <div>
+                                            <div>
                                                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                                    Role
+                                                    Durasi Magang
                                                 </label>
                                                 <p className="text-gray-900 bg-gray-200 px-4 py-3 rounded-xl">
-                                                    {student.role || 'mahasiswa'}
+                                                    {student.durasiMagang} Hari
                                                 </p>
-                                            </div> */}
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -247,10 +249,14 @@ const StudentDetail = () => {
                                                             Check Out
                                                         </th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                                                            Ketepatan Waktu
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                                                             Status
                                                         </th>
                                                     </tr>
                                                 </thead>
+
                                                 <tbody className="bg-white divide-y divide-gray-200">
                                                     {attendanceStats.attendances.map((attendance) => (
                                                         <tr key={attendance.id} className="hover:bg-gray-50">
@@ -258,21 +264,38 @@ const StudentDetail = () => {
                                                                 {formatDate(attendance.date)}
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                                {/* FIX: Use attendance.checkIn.time */}
                                                                 {attendance.checkIn?.time ? formatTime(attendance.checkIn.time) : '-'}
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                                {/* FIX: Use attendance.checkOut.time */}
                                                                 {attendance.checkOut?.time ? formatTime(attendance.checkOut.time) : '-'}
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                                {(() => {
+                                                                    if (!attendance.checkIn?.time) return <span className="text-gray-400 text-xs">-</span>;
+                                                                    const checkInDate = attendance.checkIn.time.toDate
+                                                                        ? attendance.checkIn.time.toDate()
+                                                                        : new Date(attendance.checkIn.time.seconds * 1000);
+                                                                    const hour = checkInDate.getHours();
+                                                                    const isOnTime = hour < 9;
+                                                                    return (
+                                                                        <span className={`px-3 py-1 text-xs font-semibold rounded-full
+                                                                            ${isOnTime
+                                                                                ? 'bg-green-100 text-green-800'
+                                                                                : 'bg-orange-100 text-orange-800'
+                                                                            }`}>
+                                                                            {isOnTime ? 'Tepat Waktu' : 'Terlambat'}
+                                                                        </span>
+                                                                    );
+                                                                })()}
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap">
                                                                 {attendance.checkIn && attendance.checkOut ? (
                                                                     <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                                        ✅ Lengkap
+                                                                        Lengkap
                                                                     </span>
                                                                 ) : (
                                                                     <span className="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                                        ⏳ Belum Checkout
+                                                                        Belum Checkout
                                                                     </span>
                                                                 )}
                                                             </td>

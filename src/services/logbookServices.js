@@ -2,7 +2,6 @@ import {
     collection,
     doc,
     setDoc,
-    getDoc,
     query,
     where,
     getDocs,
@@ -12,18 +11,13 @@ import {
 import { db } from './firebase';
 import { getTodayDate } from '../utils/dateHelper';
 
-/**
- * Convert image file to Base64 and save to Firestore
- * (NO Firebase Storage - Spark Plan compatible!)
- */
+
 export const uploadPhoto = async (userId, file) => {
     try {
-        // Validate file size (max 800KB untuk Base64)
         if (file.size > 800 * 1024) {
             throw new Error('Ukuran foto maksimal 800KB untuk mode gratis');
         }
 
-        // Convert to Base64
         const base64 = await new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onloadend = () => resolve(reader.result);
@@ -35,10 +29,10 @@ export const uploadPhoto = async (userId, file) => {
         const fileName = `${userId}_${today}.jpg`;
 
         return {
-            url: base64, // Base64 string langsung
-            path: fileName, // Dummy path untuk consistency
+            url: base64,
+            path: fileName,
             fileName: fileName,
-            isBase64: true // Flag untuk identify
+            isBase64: true
         };
     } catch (error) {
         console.error('Error converting photo:', error);
@@ -47,9 +41,6 @@ export const uploadPhoto = async (userId, file) => {
 };
 
 
-/**
- * Get today's logbook
- */
 export const getTodayLogbook = async (userId) => {
     try {
         const today = getTodayDate();
@@ -70,9 +61,6 @@ export const getTodayLogbook = async (userId) => {
     }
 };
 
-/**
- * Save or update logbook
- */
 export const saveLogbook = async (userId, userName, nim, description, photoData) => {
     try {
         const today = getTodayDate();
@@ -108,9 +96,6 @@ export const saveLogbook = async (userId, userName, nim, description, photoData)
     }
 };
 
-/**
- * Update attendance hasPhoto and hasLogbook flags
- */
 export const updateAttendanceFlags = async (attendanceId, hasPhoto, hasLogbook) => {
     try {
         await updateDoc(doc(db, 'attendance', attendanceId), {
