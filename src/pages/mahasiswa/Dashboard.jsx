@@ -277,7 +277,7 @@ const MahasiswaDashboard = () => {
                                         <div>
                                             <p className="text-gray-500">Belum absen pulang</p>
                                             <p className="text-xs text-green-500 mt-2 font-medium">
-                                                ⏰ Tepat waktu setelah 15:00
+                                                ⏰ Tepat waktu setelah 16:00
                                             </p>
                                         </div>
                                     )}

@@ -106,7 +106,7 @@ const StudentDetail = () => {
                                     <p className="text-3xl font-bold text-blue-600 mt-1">
                                         {attendanceStats?.durasiMagang || 0}
                                     </p>
-                                    <p className="text-xs text-gray-400 mt-1">hari kerja</p>
+                                    <p className="text-xs text-gray-400 mt-1">Hari kerja</p>
                                 </div>
                             </div>
 
@@ -126,7 +126,7 @@ const StudentDetail = () => {
                                     <p className="text-3xl font-bold text-red-500 mt-1">
                                         {attendanceStats?.totalTidakHadir || 0}
                                     </p>
-                                    <p className="text-xs text-gray-400 mt-1">hari belum/tidak hadir</p>
+                                    <p className="text-xs text-gray-400 mt-1">Hari belum/tidak hadir</p>
                                 </div>
                             </div>
 
@@ -136,7 +136,7 @@ const StudentDetail = () => {
                                     <p className="text-3xl font-bold text-orange-600 mt-1">
                                         {attendanceStats?.percentage || 0}%
                                     </p>
-                                    <p className="text-xs text-gray-400 mt-1">dari total durasi magang</p>
+                                    <p className="text-xs text-gray-400 mt-1">Dari total durasi magang</p>
                                 </div>
                             </div>
                         </div>
@@ -315,11 +315,12 @@ const StudentDetail = () => {
                                 {activeTab === 'logbook' && (
                                     <div>
                                         {logbooks.length > 0 ? (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            // <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                                 {logbooks.map((logbook) => (
                                                     <div
                                                         key={logbook.id}
-                                                        className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-all duration-200 cursor-pointer"
+                                                        className="bg-gray-50 rounded-xl p-6 hover:shadow-lg transition-all duration-200 cursor-pointer h-full"
                                                         onClick={() => setSelectedLogbook(logbook)}
                                                     >
                                                         <div className="flex items-start justify-between mb-4">
